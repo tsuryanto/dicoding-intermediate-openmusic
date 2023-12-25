@@ -3,7 +3,8 @@ const InvariantError = require('../../utils/response/exceptions/InvariantError')
 const NotFoundError = require('../../utils/response/exceptions/NotFoundError');
 
 class AlbumService {
-  constructor(albumRepo) {
+  constructor(songService, albumRepo) {
+    this.songService = songService;
     this.albumRepo = albumRepo;
   }
 
@@ -26,6 +27,9 @@ class AlbumService {
       id: album.id,
       name: album.name,
       year: album.year,
+      songs: await this.songService.getSongs({
+        albumIdParam: album.id,
+      }),
     };
   }
 
