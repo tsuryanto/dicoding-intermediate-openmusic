@@ -20,8 +20,42 @@ class SongRepository {
     return resultId;
   }
 
-  async getAll() {
-    const result = await this.dbPool.query(`SELECT * from ${SONGS}`);
+  async getAll({ albumIdParam, titleParam, performerParam }) {
+    const query = {
+      text: `SELECT * from ${SONGS}`,
+      values: [],
+    };
+
+    const param = {
+      album_id: albumIdParam,
+      title: titleParam,
+      performer: performerParam,
+    };
+    const isParamEmpty = Object.keys(param).every((k) => !param[k]);
+    if (!isParamEmpty) {
+      query.text += ' WHERE ';
+    }
+
+    let i = 1;
+    Object.keys(param).forEach((key) => {
+      const value = param[key];
+      if (value) {
+        if (key === 'album_id') {
+          query.text += `album_id = $${i}`;
+          query.values.push(value);
+        } else {
+          if (i > 1) {
+            query.text += ' AND ';
+          }
+          query.text += `LOWER(${key}) LIKE '%'||$${i}||'%'`;
+          value.toLowerCase();
+          query.values.push(value);
+        }
+        i += 1;
+      }
+    });
+
+    const result = await this.dbPool.query(query);
     return result.rows.map(({
       id, title, year, genre, performer, duration, album_id, created_at, updated_at,
     }) => ({
