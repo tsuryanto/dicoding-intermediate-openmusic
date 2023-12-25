@@ -5,6 +5,7 @@ const Hapi = require('@hapi/hapi');
 const { Pool } = require('pg');
 const ClientError = require('./utils/response/exceptions/ClientError');
 const InitAlbumPlugin = require('./src/albums');
+const InitSongPlugin = require('./src/songs');
 const Response = require('./utils/response/Response');
 
 const init = async () => {
@@ -22,6 +23,7 @@ const init = async () => {
 
   // Init Services
   await server.register(InitAlbumPlugin(dbPool));
+  await server.register(InitSongPlugin(dbPool));
 
   // err response handling
   server.ext('onPreResponse', (request, h) => {

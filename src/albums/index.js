@@ -5,7 +5,7 @@ const AlbumRepository = require('./repository');
 
 const InitAlbumPlugin = (dbPool) => ({
   plugin: {
-    name: 'notes',
+    name: 'albums',
     version: '1.0.0',
     register: async (server) => {
       const albumRepo = new AlbumRepository(dbPool);
