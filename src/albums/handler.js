@@ -17,6 +17,14 @@ class AlbumHandler {
     const success = new Success(h, 'Catatan berhasil ditambahkan', { albumId }, 201);
     return success.response();
   }
+
+  async getAlbumByIdHandler(request, h) {
+    const { id } = request.params;
+    const album = await this.service.getAlbum(id);
+
+    const success = new Success(h, null, { album });
+    return success.response();
+  }
 }
 
 module.exports = AlbumHandler;
