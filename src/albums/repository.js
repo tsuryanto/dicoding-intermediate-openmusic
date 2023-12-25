@@ -41,6 +41,21 @@ class AlbumRepository {
       updatedAt: updated_at,
     }))[0];
   }
+
+  async updateById(id, { name, year }) {
+    const now = new Date().toISOString();
+    const query = {
+      text: `UPDATE ${ALBUMS} SET name = $2, year = $3, updated_at = $4 WHERE id = $1 RETURNING id`,
+      values: [id, name, year, now],
+    };
+
+    const result = await this.dbPool.query(query);
+    if (result.rows.length === 0) {
+      return null;
+    }
+
+    return result.rows[0].id;
+  }
 }
 
 module.exports = AlbumRepository;

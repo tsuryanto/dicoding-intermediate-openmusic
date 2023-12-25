@@ -28,6 +28,13 @@ class AlbumService {
       year: album.year,
     };
   }
+
+  async editAlbumById(id, { name, year }) {
+    const resultId = await this.albumRepo.updateById(id, { name, year });
+    if (!resultId) {
+      throw new NotFoundError('Album gagal diperbarui');
+    }
+  }
 }
 
 module.exports = AlbumService;
