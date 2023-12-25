@@ -3,10 +3,10 @@ require('dotenv').config();
 
 const Hapi = require('@hapi/hapi');
 const { Pool } = require('pg');
-const ClientError = require('./utils/response/exceptions/ClientError');
-const InitAlbumPlugin = require('./src/albums');
-const InitSongPlugin = require('./src/songs');
-const Response = require('./utils/response/Response');
+const ClientError = require('../utils/response/exceptions/ClientError');
+const InitAlbumPlugin = require('./albums');
+const InitSongPlugin = require('./songs');
+const Response = require('../utils/response/Response');
 
 const init = async () => {
   const server = Hapi.server({
