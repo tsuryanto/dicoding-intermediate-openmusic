@@ -22,6 +22,13 @@ class SongHandler {
     const success = new Success(h, 'Song berhasil ditambahkan', { songId }, 201);
     return success.response();
   }
+
+  async getSongByIdHandler(request, h) {
+    const { id } = request.params;
+    const song = await this.service.getSong(id);
+    const success = new Success(h, null, { song });
+    return success.response();
+  }
 }
 
 module.exports = SongHandler;

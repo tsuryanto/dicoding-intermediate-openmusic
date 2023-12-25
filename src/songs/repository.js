@@ -21,6 +21,31 @@ class SongRepository {
     }
     return result.rows[0].id;
   }
+
+  async getById(reqId) {
+    const query = {
+      text: `SELECT * FROM ${SONGS} WHERE id = $1`,
+      values: [reqId],
+    };
+    const result = await this.dbPool.query(query);
+    if (result.rows.length === 0) {
+      return null;
+    }
+
+    return result.rows.map(({
+      id, title, year, genre, performer, duration, album_id, created_at, updated_at,
+    }) => ({
+      id,
+      title,
+      year,
+      genre,
+      performer,
+      duration,
+      albumId: album_id,
+      createdAt: created_at,
+      updatedAt: updated_at,
+    }))[0];
+  }
 }
 
 module.exports = SongRepository;

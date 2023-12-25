@@ -1,5 +1,6 @@
 const { nanoid } = require('nanoid');
 const InvariantError = require('../../utils/response/exceptions/InvariantError');
+const NotFoundError = require('../../utils/response/exceptions/NotFoundError');
 
 class SongService {
   constructor(songRepo) {
@@ -17,6 +18,23 @@ class SongService {
       throw new InvariantError('Song gagal ditambahkan');
     }
     return resultId;
+  }
+
+  async getSong(id) {
+    const song = await this.songRepo.getById(id);
+    if (!song) {
+      throw new NotFoundError('Song tidak ditemukan');
+    }
+
+    return {
+      id: song.id,
+      title: song.title,
+      year: song.year,
+      performer: song.performer,
+      genre: song.genre,
+      duration: song.duration,
+      albumId: song.albumId,
+    };
   }
 }
 
