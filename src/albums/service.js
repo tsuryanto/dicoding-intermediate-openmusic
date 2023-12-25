@@ -35,6 +35,13 @@ class AlbumService {
       throw new NotFoundError('Album gagal diperbarui');
     }
   }
+
+  async deleteAlbumById(id) {
+    const resultId = await this.albumRepo.deleteById(id);
+    if (!resultId) {
+      throw new NotFoundError('Album gagal dihapus');
+    }
+  }
 }
 
 module.exports = AlbumService;
