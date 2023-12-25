@@ -58,6 +58,13 @@ class SongService {
       throw new NotFoundError('Song gagal diperbarui');
     }
   }
+
+  async deleteSongById(id) {
+    const resultId = await this.songRepo.deleteById(id);
+    if (!resultId) {
+      throw new NotFoundError('Song gagal dihapus');
+    }
+  }
 }
 
 module.exports = SongService;

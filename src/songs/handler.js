@@ -52,6 +52,13 @@ class SongHandler {
     const success = new Success(h, 'Song berhasil diperbarui');
     return success.response();
   }
+
+  async deleteSongByIdHandler(request, h) {
+    const { id } = request.params;
+    await this.service.deleteSongById(id);
+    const success = new Success(h, 'Song berhasil dihapus');
+    return success.response();
+  }
 }
 
 module.exports = SongHandler;

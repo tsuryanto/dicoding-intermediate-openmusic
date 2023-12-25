@@ -79,6 +79,19 @@ class SongRepository {
     }
     return result.rows[0].id;
   }
+
+  async deleteById(id) {
+    const query = {
+      text: `DELETE FROM ${SONGS} WHERE id = $1 RETURNING id`,
+      values: [id],
+    };
+
+    const result = await this.dbPool.query(query);
+    if (result.rows.length === 0) {
+      return null;
+    }
+    return result.rows[0].id;
+  }
 }
 
 module.exports = SongRepository;
