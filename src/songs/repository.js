@@ -63,6 +63,22 @@ class SongRepository {
       updatedAt: updated_at,
     }))[0];
   }
+
+  async updateById(id, {
+    title, year, genre, performer, duration, albumId,
+  }) {
+    const now = new Date().toISOString();
+    const query = {
+      text: `UPDATE ${SONGS} SET title = $1, year = $2, genre = $3, performer = $4, duration = $5, album_id = $6, updated_at = $7 WHERE id = $8 RETURNING id`,
+      values: [title, year, genre, performer, duration, albumId, now, id],
+    };
+
+    const result = await this.dbPool.query(query);
+    if (result.rows.length === 0) {
+      return null;
+    }
+    return result.rows[0].id;
+  }
 }
 
 module.exports = SongRepository;

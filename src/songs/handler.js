@@ -35,6 +35,23 @@ class SongHandler {
     const success = new Success(h, null, { song });
     return success.response();
   }
+
+  async putSongByIdHandler(request, h) {
+    const validator = new Validator(SongPayloadSchema);
+    validator.validate(request.payload);
+
+    const { id } = request.params;
+    const {
+      title, year, genre, performer, duration, albumId,
+    } = request.payload;
+
+    await this.service.editSongById(id, {
+      title, year, genre, performer, duration, albumId,
+    });
+
+    const success = new Success(h, 'Song berhasil diperbarui');
+    return success.response();
+  }
 }
 
 module.exports = SongHandler;

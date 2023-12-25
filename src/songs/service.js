@@ -47,6 +47,17 @@ class SongService {
       albumId: song.albumId,
     };
   }
+
+  async editSongById(id, {
+    title, year, genre, performer, duration, albumId,
+  }) {
+    const resultId = await this.songRepo.updateById(id, {
+      title, year, genre, performer, duration, albumId,
+    });
+    if (!resultId) {
+      throw new NotFoundError('Song gagal diperbarui');
+    }
+  }
 }
 
 module.exports = SongService;
