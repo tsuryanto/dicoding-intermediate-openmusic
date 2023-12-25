@@ -23,6 +23,12 @@ class SongHandler {
     return success.response();
   }
 
+  async getSongsHandler(request, h) {
+    const songs = await this.service.getSongs();
+    const success = new Success(h, null, { songs });
+    return success.response();
+  }
+
   async getSongByIdHandler(request, h) {
     const { id } = request.params;
     const song = await this.service.getSong(id);

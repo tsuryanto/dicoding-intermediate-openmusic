@@ -6,6 +6,11 @@ const routes = (handler) => [
   },
   {
     method: 'GET',
+    path: '/songs',
+    handler: (request, h) => handler.getSongsHandler(request, h),
+  },
+  {
+    method: 'GET',
     path: '/songs/{id}',
     handler: (request, h) => handler.getSongByIdHandler(request, h),
   },

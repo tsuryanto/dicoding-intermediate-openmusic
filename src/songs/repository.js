@@ -22,6 +22,23 @@ class SongRepository {
     return result.rows[0].id;
   }
 
+  async getAll() {
+    const result = await this.dbPool.query(`SELECT * from ${SONGS}`);
+    return result.rows.map(({
+      id, title, year, genre, performer, duration, album_id, created_at, updated_at,
+    }) => ({
+      id,
+      title,
+      year,
+      genre,
+      performer,
+      duration,
+      albumId: album_id,
+      createdAt: created_at,
+      updatedAt: updated_at,
+    }));
+  }
+
   async getById(reqId) {
     const query = {
       text: `SELECT * FROM ${SONGS} WHERE id = $1`,
