@@ -1,3 +1,4 @@
 const ALBUMS = 'albums';
+const SONGS = 'songs';
 
-module.exports = { ALBUMS };
+module.exports = { ALBUMS, SONGS };
