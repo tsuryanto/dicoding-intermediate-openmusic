@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 const { SONGS } = require('../../utils/constant/Tables');
+const { returningId } = require('../../utils/storage/postgres/Query');
 
 class SongRepository {
   constructor(dbPool) {
@@ -15,11 +16,8 @@ class SongRepository {
       values: [id, title, year, genre, performer, duration, albumId, now, now],
     };
 
-    const result = await this.dbPool.query(query);
-    if (result.rows.length === 0) {
-      return null;
-    }
-    return result.rows[0].id;
+    const resultId = await returningId(this.dbPool, query);
+    return resultId;
   }
 
   async getAll() {
@@ -73,11 +71,8 @@ class SongRepository {
       values: [title, year, genre, performer, duration, albumId, now, id],
     };
 
-    const result = await this.dbPool.query(query);
-    if (result.rows.length === 0) {
-      return null;
-    }
-    return result.rows[0].id;
+    const resultId = await returningId(this.dbPool, query);
+    return resultId;
   }
 
   async deleteById(id) {
@@ -85,12 +80,8 @@ class SongRepository {
       text: `DELETE FROM ${SONGS} WHERE id = $1 RETURNING id`,
       values: [id],
     };
-
-    const result = await this.dbPool.query(query);
-    if (result.rows.length === 0) {
-      return null;
-    }
-    return result.rows[0].id;
+    const resultId = await returningId(this.dbPool, query);
+    return resultId;
   }
 }
 

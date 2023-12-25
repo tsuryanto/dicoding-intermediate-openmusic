@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 const { ALBUMS } = require('../../utils/constant/Tables');
+const { returningId } = require('../../utils/storage/postgres/Query');
 
 class AlbumRepository {
   constructor(dbPool) {
@@ -13,11 +14,8 @@ class AlbumRepository {
       values: [id, name, year, now, now],
     };
 
-    const result = await this.dbPool.query(query);
-    if (result.rows.length === 0) {
-      return null;
-    }
-    return result.rows[0].id;
+    const resultId = await returningId(this.dbPool, query);
+    return resultId;
   }
 
   async getById(reqId) {
@@ -48,11 +46,8 @@ class AlbumRepository {
       values: [id, name, year, now],
     };
 
-    const result = await this.dbPool.query(query);
-    if (result.rows.length === 0) {
-      return null;
-    }
-    return result.rows[0].id;
+    const resultId = await returningId(this.dbPool, query);
+    return resultId;
   }
 
   async deleteById(id) {
@@ -61,11 +56,8 @@ class AlbumRepository {
       values: [id],
     };
 
-    const result = await this.dbPool.query(query);
-    if (result.rows.length === 0) {
-      return null;
-    }
-    return result.rows[0].id;
+    const resultId = await returningId(this.dbPool, query);
+    return resultId;
   }
 }
 
