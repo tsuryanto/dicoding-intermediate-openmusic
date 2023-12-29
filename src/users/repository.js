@@ -12,7 +12,8 @@ class UserRepository {
   }) {
     const now = new Date().toISOString();
     const query = {
-      text: `INSERT INTO ${USERS}(id, username, password, fullname, created_at, updated_at) VALUES($1, $2, $3, $4, $5, $5) RETURNING id`,
+      text: `INSERT INTO ${USERS}(id, username, password, fullname, created_at, updated_at) 
+            VALUES($1, $2, $3, $4, $5, $5) ON CONFLICT (username) DO NOTHING RETURNING id`,
       values: [id, username, password, fullname, now],
     };
 
