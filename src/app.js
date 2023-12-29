@@ -22,8 +22,10 @@ const init = async () => {
   const dbPool = new Pool();
 
   // Init Services
-  await server.register(InitAlbumPlugin(dbPool));
-  await server.register(InitSongPlugin(dbPool));
+  await server.register([
+    InitAlbumPlugin(dbPool),
+    InitSongPlugin(dbPool),
+  ]);
 
   // err response handling
   server.ext('onPreResponse', (request, h) => {
