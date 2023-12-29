@@ -1,7 +1,5 @@
 const { SONGS } = require('../utils/constant/Tables');
 
-exports.shorthands = undefined;
-
 exports.up = (pgm) => {
   pgm.createTable(SONGS, {
     id: {

@@ -1,24 +1,21 @@
-const { ALBUMS } = require('../utils/constant/Tables');
+const { USERS } = require('../utils/constant/Tables');
 
 exports.up = (pgm) => {
-  pgm.createTable(ALBUMS, {
+  pgm.createTable(USERS, {
     id: {
       type: 'VARCHAR(50)',
       primaryKey: true,
     },
-    name: {
+    username: {
+      type: 'VARCHAR(50)',
+      unique: true,
+      notNull: true,
+    },
+    password: {
       type: 'TEXT',
       notNull: true,
     },
-    year: {
-      type: 'SMALLINT',
-      notNull: true,
-    },
-    created_at: {
-      type: 'TEXT',
-      notNull: true,
-    },
-    updated_at: {
+    fullname: {
       type: 'TEXT',
       notNull: true,
     },
@@ -26,5 +23,5 @@ exports.up = (pgm) => {
 };
 
 exports.down = (pgm) => {
-  pgm.dropTable(ALBUMS);
+  pgm.dropTable(USERS);
 };
