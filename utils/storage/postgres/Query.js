@@ -1,6 +1,6 @@
 const returningId = async (dbPool, query) => {
   const result = await dbPool.query(query);
-  if (result.rows.length === 0) {
+  if (!result.rowCount) {
     return null;
   }
   return result.rows[0].id;

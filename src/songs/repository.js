@@ -12,8 +12,8 @@ class SongRepository {
   }) {
     const now = new Date().toISOString();
     const query = {
-      text: `INSERT INTO ${SONGS}(id, title, year, genre, performer, duration, album_id, created_at, updated_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`,
-      values: [id, title, year, genre, performer, duration, albumId, now, now],
+      text: `INSERT INTO ${SONGS}(id, title, year, genre, performer, duration, album_id, created_at, updated_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $8) RETURNING id`,
+      values: [id, title, year, genre, performer, duration, albumId, now],
     };
 
     const resultId = await returningId(this.dbPool, query);

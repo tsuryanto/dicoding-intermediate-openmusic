@@ -10,8 +10,8 @@ class AlbumRepository {
   async create(id, name, year) {
     const now = new Date().toISOString();
     const query = {
-      text: `INSERT INTO ${ALBUMS}(id, name, year, created_at, updated_at) VALUES($1, $2, $3, $4, $5) RETURNING id`,
-      values: [id, name, year, now, now],
+      text: `INSERT INTO ${ALBUMS}(id, name, year, created_at, updated_at) VALUES($1, $2, $3, $4, $4) RETURNING id`,
+      values: [id, name, year, now],
     };
 
     const resultId = await returningId(this.dbPool, query);
@@ -24,7 +24,7 @@ class AlbumRepository {
       values: [reqId],
     };
     const result = await this.dbPool.query(query);
-    if (result.rows.length === 0) {
+    if (!result.rowCount) {
       return null;
     }
 
