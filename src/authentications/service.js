@@ -1,6 +1,6 @@
-const Jwt = require('@hapi/jwt');
 const bcrypt = require('bcrypt');
 const AuthenticationError = require('../../utils/response/exceptions/AuthenticationError');
+const JWT = require('../../utils/authentication/JWT');
 
 class AuthenticationService {
   constructor(authenticationRepo) {
@@ -16,8 +16,8 @@ class AuthenticationService {
     }
 
     // generate access token dan refresh token
-    const accessToken = Jwt.token.generate({ id }, process.env.ACCESS_TOKEN_KEY);
-    const refreshToken = Jwt.token.generate({ id }, process.env.REFRESH_TOKEN_KEY);
+    const accessToken = new JWT(process.env.ACCESS_TOKEN_KEY).encrypt({ id });
+    const refreshToken = new JWT(process.env.REFRESH_TOKEN_KEY).encrypt({ id });
 
     // add refresh token
     await this.authenticationRepo.addRefreshToken(refreshToken);
