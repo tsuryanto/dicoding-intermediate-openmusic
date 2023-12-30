@@ -1,6 +1,7 @@
 const {
   PostAuthenticationPayloadSchema,
   PutAuthenticationPayloadSchema,
+  DeleteAuthenticationPayloadSchema,
 } = require('./model/requestSchema');
 const Success = require('../../utils/response/Success');
 const Validator = require('../../utils/request/Validator');
@@ -30,6 +31,16 @@ class AuthenticationHandler {
     const { refreshToken } = request.payload;
     const accessToken = await this.service.getAccessToken(refreshToken);
     const success = new Success(h, 'Access Token berhasil diperbarui', { accessToken });
+    return success.response();
+  }
+
+  async deleteAuthenticationHandler(request, h) {
+    const validator = new Validator(DeleteAuthenticationPayloadSchema);
+    validator.validate(request.payload);
+
+    const { refreshToken } = request.payload;
+    await this.service.deleteRefreshToken(refreshToken);
+    const success = new Success(h, 'Access Token berhasil dihapus');
     return success.response();
   }
 }

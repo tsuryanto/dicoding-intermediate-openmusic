@@ -33,7 +33,7 @@ class AuthenticationRepository {
     await this.dbPool.query(query);
   }
 
-  async getToken(token) {
+  async getRefreshToken(token) {
     const query = {
       text: `SELECT token FROM ${AUTHENTICATIONS} WHERE token = $1`,
       values: [token],
@@ -44,6 +44,14 @@ class AuthenticationRepository {
       return null;
     }
     return result.rows[0].token;
+  }
+
+  async deleteRefreshToken(token) {
+    const query = {
+      text: `DELETE FROM ${AUTHENTICATIONS} WHERE token = $1`,
+      values: [token],
+    };
+    await this.dbPool.query(query);
   }
 }
 

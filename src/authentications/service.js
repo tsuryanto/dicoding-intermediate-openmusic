@@ -28,7 +28,7 @@ class AuthenticationService {
 
   async getAccessToken(refreshToken) {
     // get available refresh token from database
-    const availableRefreshToken = await this.authenticationRepo.getToken(refreshToken);
+    const availableRefreshToken = await this.authenticationRepo.getRefreshToken(refreshToken);
     if (!availableRefreshToken) {
       throw new InvariantError('Refresh token tidak valid');
     }
@@ -38,6 +38,11 @@ class AuthenticationService {
 
     const accessToken = new JWT(process.env.ACCESS_TOKEN_KEY).encrypt({ userId });
     return accessToken;
+  }
+
+  async deleteRefreshToken(refreshToken) {
+    new JWT(process.env.REFRESH_TOKEN_KEY).decrypt(refreshToken);
+    await this.authenticationRepo.deleteRefreshToken(refreshToken);
   }
 }
 
