@@ -4,6 +4,7 @@ require('dotenv').config();
 const Hapi = require('@hapi/hapi');
 const { Pool } = require('pg');
 const ClientError = require('../utils/response/exceptions/ClientError');
+const InitAuthenticationPlugin = require('./authentications');
 const InitUserPlugin = require('./users');
 const InitAlbumPlugin = require('./albums');
 const InitSongPlugin = require('./songs');
@@ -24,6 +25,7 @@ const init = async () => {
 
   // Init Services
   await server.register([
+    InitAuthenticationPlugin(dbPool),
     InitUserPlugin(dbPool),
     InitAlbumPlugin(dbPool),
     InitSongPlugin(dbPool),

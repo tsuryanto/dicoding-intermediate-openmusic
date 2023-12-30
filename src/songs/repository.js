@@ -77,7 +77,7 @@ class SongRepository {
       values: [reqId],
     };
     const result = await this.dbPool.query(query);
-    if (result.rows.length === 0) {
+    if (!result.rowCount) {
       return null;
     }
 

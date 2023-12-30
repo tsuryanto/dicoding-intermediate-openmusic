@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 const { USERS } = require('../../utils/constant/Tables');
 const { returningId } = require('../../utils/storage/postgres/Query');
 
