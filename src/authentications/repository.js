@@ -32,6 +32,19 @@ class AuthenticationRepository {
     };
     await this.dbPool.query(query);
   }
+
+  async getToken(token) {
+    const query = {
+      text: `SELECT token FROM ${AUTHENTICATIONS} WHERE token = $1`,
+      values: [token],
+    };
+
+    const result = await this.dbPool.query(query);
+    if (!result.rowCount) {
+      return null;
+    }
+    return result.rows[0].token;
+  }
 }
 
 module.exports = AuthenticationRepository;

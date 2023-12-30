@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const AuthenticationError = require('../../utils/response/exceptions/AuthenticationError');
 const JWT = require('../../utils/authentication/JWT');
+const InvariantError = require('../../utils/response/exceptions/InvariantError');
 
 class AuthenticationService {
   constructor(authenticationRepo) {
@@ -23,6 +24,20 @@ class AuthenticationService {
     await this.authenticationRepo.addRefreshToken(refreshToken);
 
     return { accessToken, refreshToken };
+  }
+
+  async getAccessToken(refreshToken) {
+    // get available refresh token from database
+    const availableRefreshToken = await this.authenticationRepo.getToken(refreshToken);
+    if (!availableRefreshToken) {
+      throw new InvariantError('Refresh token tidak valid');
+    }
+
+    const payload = new JWT(process.env.REFRESH_TOKEN_KEY).decrypt(availableRefreshToken);
+    const userId = payload.id;
+
+    const accessToken = new JWT(process.env.ACCESS_TOKEN_KEY).encrypt({ userId });
+    return accessToken;
   }
 }
 
