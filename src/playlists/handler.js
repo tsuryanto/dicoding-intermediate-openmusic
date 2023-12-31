@@ -49,6 +49,15 @@ class PlaylistHandler {
     const success = new Success(h, 'Song berhasil ditambahkan ke Playlist', { resultId }, 201);
     return success.response();
   }
+
+  async getSongsInPlaylistHandler(request, h) {
+    const { id: credentialId } = request.auth.credentials;
+    const { id: playlistId } = request.params;
+
+    const playlist = await this.service.getSongsInPlaylist(credentialId, playlistId);
+    const success = new Success(h, null, { playlist });
+    return success.response();
+  }
 }
 
 module.exports = PlaylistHandler;

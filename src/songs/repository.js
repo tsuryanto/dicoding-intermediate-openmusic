@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-const { SONGS } = require('../../utils/constant/Tables');
+const { SONGS, PLAYLISTS, PLAYLIST_SONGS } = require('../../utils/constant/Tables');
 const { returningId } = require('../../utils/storage/postgres/Query');
 
 class SongRepository {
@@ -20,11 +20,18 @@ class SongRepository {
     return resultId;
   }
 
-  async getAll({ albumIdParam, titleParam, performerParam }) {
+  async getAll({
+    albumIdParam, titleParam, performerParam, playlistIdParam,
+  }) {
     const query = {
       text: `SELECT * from ${SONGS}`,
       values: [],
     };
+
+    if (playlistIdParam) {
+      query.text += ` JOIN ${PLAYLIST_SONGS} on ${SONGS}.id = ${PLAYLIST_SONGS}.song_id JOIN ${PLAYLISTS} on ${PLAYLIST_SONGS}.playlist_id = ${PLAYLISTS}.id WHERE ${PLAYLISTS}.id = $1`;
+      query.values.push(playlistIdParam);
+    }
 
     const param = {
       album_id: albumIdParam,

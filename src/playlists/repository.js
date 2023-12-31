@@ -1,8 +1,8 @@
 /* eslint-disable camelcase */
-const { PLAYLISTS, PLAYLIST_SONGS } = require('../../utils/constant/Tables');
+const { PLAYLISTS, PLAYLIST_SONGS, USERS } = require('../../utils/constant/Tables');
 const { returningId } = require('../../utils/storage/postgres/Query');
 
-class AlbumRepository {
+class PlaylistRepository {
   constructor(dbPool) {
     this.dbPool = dbPool;
   }
@@ -36,7 +36,7 @@ class AlbumRepository {
 
   async getById(reqId) {
     const query = {
-      text: `SELECT * FROM ${PLAYLISTS} WHERE id = $1`,
+      text: `SELECT p.id, p.name, p.owner, u.username FROM ${PLAYLISTS} p LEFT JOIN ${USERS} u on p.owner = u.id WHERE p.id = $1`,
       values: [reqId],
     };
     const result = await this.dbPool.query(query);
@@ -45,11 +45,12 @@ class AlbumRepository {
     }
 
     return result.rows.map(({
-      id, name, owner,
+      id, name, owner, username,
     }) => ({
       id,
       name,
       owner,
+      username,
     }))[0];
   }
 
@@ -75,4 +76,4 @@ class AlbumRepository {
   }
 }
 
-module.exports = AlbumRepository;
+module.exports = PlaylistRepository;

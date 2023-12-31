@@ -5,8 +5,8 @@ const ForbiddenError = require('../../utils/response/exceptions/ForbiddenError')
 
 class PlaylistService {
   constructor(songService, playlistRepo) {
-    this.playlistRepo = playlistRepo;
     this.songService = songService;
+    this.playlistRepo = playlistRepo;
   }
 
   async verifyPlaylistOwner(credentialId, playlistId) {
@@ -57,6 +57,18 @@ class PlaylistService {
       throw new InvariantError('Song gagal ditambahkan ke Playlist');
     }
     return resultId;
+  }
+
+  async getSongsInPlaylist(credentialId, playlistId) {
+    await this.verifyPlaylistOwner(credentialId, playlistId);
+    const { id, name, username } = await this.playlistRepo.getById(playlistId);
+    const songs = await this.songService.getSongs({ playlistIdParam: playlistId });
+    return {
+      id,
+      name,
+      username,
+      songs,
+    };
   }
 }
 

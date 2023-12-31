@@ -20,8 +20,12 @@ class SongService {
     return resultId;
   }
 
-  async getSongs({ albumIdParam, titleParam, performerParam }) {
-    const songs = await this.songRepo.getAll({ albumIdParam, titleParam, performerParam });
+  async getSongs({
+    albumIdParam, titleParam, performerParam, playlistIdParam,
+  }) {
+    const songs = await this.songRepo.getAll({
+      albumIdParam, titleParam, performerParam, playlistIdParam,
+    });
     return songs.map(({
       id, title, performer,
     }) => ({
