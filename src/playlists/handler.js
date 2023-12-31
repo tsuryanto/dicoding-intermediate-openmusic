@@ -2,6 +2,7 @@ const Success = require('../../utils/response/Success');
 const {
   PostPlaylistPayloadSchema,
   PostSongIntoPlaylistPayloadSchema,
+  DeleteSongFromPlaylistPayloadSchema,
 } = require('./model/requestSchema');
 const Validator = require('../../utils/request/Validator');
 
@@ -56,6 +57,19 @@ class PlaylistHandler {
 
     const playlist = await this.service.getSongsInPlaylist(credentialId, playlistId);
     const success = new Success(h, null, { playlist });
+    return success.response();
+  }
+
+  async deleteSongFromPlaylistHandler(request, h) {
+    const validator = new Validator(DeleteSongFromPlaylistPayloadSchema);
+    validator.validate(request.payload);
+
+    const { id: credentialId } = request.auth.credentials;
+    const { id: playlistId } = request.params;
+    const { songId } = request.payload;
+
+    await this.service.deleteSongFromPlaylist(credentialId, playlistId, { songId });
+    const success = new Success(h, 'Playlist berhasil dihapus dari Playlist');
     return success.response();
   }
 }

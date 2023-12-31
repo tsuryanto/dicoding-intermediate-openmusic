@@ -70,6 +70,14 @@ class PlaylistService {
       songs,
     };
   }
+
+  async deleteSongFromPlaylist(credentialId, playlistId, { songId }) {
+    await this.verifyPlaylistOwner(credentialId, playlistId);
+    const resultId = await this.playlistRepo.deleteSongById(playlistId, songId);
+    if (!resultId) {
+      throw new NotFoundError('Song gagal dihapus dari Playlist');
+    }
+  }
 }
 
 module.exports = PlaylistService;

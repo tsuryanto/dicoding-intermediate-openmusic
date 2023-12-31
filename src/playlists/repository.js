@@ -74,6 +74,16 @@ class PlaylistRepository {
     const resultId = await returningId(this.dbPool, query);
     return resultId;
   }
+
+  async deleteSongById(playlistId, songId) {
+    const query = {
+      text: `DELETE FROM ${PLAYLIST_SONGS} WHERE playlist_id = $1 AND song_id = $2 RETURNING id`,
+      values: [playlistId, songId],
+    };
+
+    const resultId = await returningId(this.dbPool, query);
+    return resultId;
+  }
 }
 
 module.exports = PlaylistRepository;

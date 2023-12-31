@@ -42,7 +42,7 @@ const routes = (handler) => [
   {
     method: 'DELETE',
     path: '/playlists/{id}/songs',
-    handler: (request, h) => handler.deleteSongInPlaylistHandler(request, h),
+    handler: (request, h) => handler.deleteSongFromPlaylistHandler(request, h),
     options: {
       auth: 'notesappJwt',
     },
