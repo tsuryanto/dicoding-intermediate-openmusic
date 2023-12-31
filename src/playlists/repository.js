@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-const { PLAYLISTS } = require('../../utils/constant/Tables');
+const { PLAYLISTS, PLAYLIST_SONGS } = require('../../utils/constant/Tables');
 const { returningId } = require('../../utils/storage/postgres/Query');
 
 class AlbumRepository {
@@ -57,6 +57,17 @@ class AlbumRepository {
     const query = {
       text: `DELETE FROM ${PLAYLISTS} WHERE id = $1 RETURNING id`,
       values: [id],
+    };
+
+    const resultId = await returningId(this.dbPool, query);
+    return resultId;
+  }
+
+  async addSong(id, playlistId, songId) {
+    const now = new Date().toISOString();
+    const query = {
+      text: `INSERT INTO ${PLAYLIST_SONGS}(id, playlist_id, song_id, created_at) VALUES($1, $2, $3, $4) RETURNING id`,
+      values: [id, playlistId, songId, now],
     };
 
     const resultId = await returningId(this.dbPool, query);

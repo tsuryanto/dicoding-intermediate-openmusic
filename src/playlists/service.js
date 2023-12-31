@@ -1,11 +1,12 @@
 const { nanoid } = require('nanoid');
 const InvariantError = require('../../utils/response/exceptions/InvariantError');
 const NotFoundError = require('../../utils/response/exceptions/NotFoundError');
-const AuthenticationError = require('../../utils/response/exceptions/AuthenticationError');
+const ForbiddenError = require('../../utils/response/exceptions/ForbiddenError');
 
 class PlaylistService {
-  constructor(playlistRepo) {
+  constructor(songService, playlistRepo) {
     this.playlistRepo = playlistRepo;
+    this.songService = songService;
   }
 
   async verifyPlaylistOwner(credentialId, playlistId) {
@@ -14,7 +15,7 @@ class PlaylistService {
       throw new NotFoundError('Playlist tidak ditemukan');
     }
     if (playlist.owner !== credentialId) {
-      throw new AuthenticationError('Anda tidak berhak mengakses resource ini');
+      throw new ForbiddenError('Anda tidak berhak mengakses resource ini');
     }
   }
 
@@ -44,6 +45,18 @@ class PlaylistService {
     if (!resultId) {
       throw new NotFoundError('Playlist gagal dihapus');
     }
+  }
+
+  async addSongIntoPlaylist(credentialId, playlistId, { songId }) {
+    await this.verifyPlaylistOwner(credentialId, playlistId);
+    await this.songService.getSong(songId);
+    const id = `playlist-song-${nanoid(16)}}`;
+    const resultId = await this.playlistRepo.addSong(id, playlistId, songId);
+
+    if (!resultId) {
+      throw new InvariantError('Song gagal ditambahkan ke Playlist');
+    }
+    return resultId;
   }
 }
 

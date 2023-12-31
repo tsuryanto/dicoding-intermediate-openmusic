@@ -1,5 +1,8 @@
 const Success = require('../../utils/response/Success');
-const { PostPlaylistPayloadSchema } = require('./model/requestSchema');
+const {
+  PostPlaylistPayloadSchema,
+  PostSongIntoPlaylistPayloadSchema,
+} = require('./model/requestSchema');
 const Validator = require('../../utils/request/Validator');
 
 class PlaylistHandler {
@@ -31,6 +34,19 @@ class PlaylistHandler {
     const { id: credentialId } = request.auth.credentials;
     await this.service.deletePlaylistById(credentialId, id);
     const success = new Success(h, 'Playlist berhasil dihapus');
+    return success.response();
+  }
+
+  async postSongIntoPlaylistHandler(request, h) {
+    const validator = new Validator(PostSongIntoPlaylistPayloadSchema);
+    validator.validate(request.payload);
+
+    const { id: playlistId } = request.params;
+    const { songId } = request.payload;
+    const { id: credentialId } = request.auth.credentials;
+    const resultId = await this.service.addSongIntoPlaylist(credentialId, playlistId, { songId });
+
+    const success = new Success(h, 'Song berhasil ditambahkan ke Playlist', { resultId }, 201);
     return success.response();
   }
 }
