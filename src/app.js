@@ -1,16 +1,19 @@
 // mengimpor dotenv dan menjalankan konfigurasinya
 require('dotenv').config();
+const { Pool } = require('pg');
 
 const Hapi = require('@hapi/hapi');
-const { Pool } = require('pg');
 const Jwt = require('@hapi/jwt');
+
 const ClientError = require('../utils/response/exceptions/ClientError');
+const Response = require('../utils/response/Response');
+
 const InitAuthenticationPlugin = require('./authentications');
 const InitUserPlugin = require('./users');
 const InitAlbumPlugin = require('./albums');
 const InitSongPlugin = require('./songs');
 const InitPlaylistPlugin = require('./playlists');
-const Response = require('../utils/response/Response');
+const InitCollaborationPlugin = require('./collaborations');
 
 const init = async () => {
   const server = Hapi.server({
@@ -73,6 +76,7 @@ const init = async () => {
     InitAlbumPlugin(dbPool),
     InitSongPlugin(dbPool),
     InitPlaylistPlugin(dbPool),
+    InitCollaborationPlugin(dbPool),
   ]);
 
   // err response handling

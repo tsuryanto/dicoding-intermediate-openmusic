@@ -19,6 +19,26 @@ class UserRepository {
     const resultId = await returningId(this.dbPool, query);
     return resultId;
   }
+
+  async getById(reqId) {
+    const query = {
+      text: `SELECT id, username, fullname FROM ${USERS} WHERE id = $1`,
+      values: [reqId],
+    };
+
+    const result = await this.dbPool.query(query);
+    if (!result.rowCount) {
+      return null;
+    }
+
+    return result.rows.map(({
+      id, username, fullname,
+    }) => ({
+      id,
+      username,
+      fullname,
+    }))[0];
+  }
 }
 
 module.exports = UserRepository;

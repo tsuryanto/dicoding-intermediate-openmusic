@@ -5,7 +5,7 @@ const PlaylistRepository = require('./repository');
 const SongService = require('../songs/service');
 const SongRepository = require('../songs/repository');
 
-const InitPlaylistHPlugin = (dbPool) => ({
+const InitPlaylistPlugin = (dbPool) => ({
   plugin: {
     name: 'playlists',
     version: '1.0.0',
@@ -21,4 +21,4 @@ const InitPlaylistHPlugin = (dbPool) => ({
   },
 });
 
-module.exports = InitPlaylistHPlugin;
+module.exports = InitPlaylistPlugin;

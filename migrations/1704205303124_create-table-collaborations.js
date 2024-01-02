@@ -8,11 +8,9 @@ exports.up = (pgm) => {
     },
     playlist_id: {
       type: 'VARCHAR(50)',
-      notNull: true,
     },
     user_id: {
       type: 'VARCHAR(50)',
-      notNull: true,
     },
     created_at: {
       type: 'TEXT',
@@ -25,7 +23,8 @@ exports.up = (pgm) => {
 };
 
 exports.down = (pgm) => {
-  pgm.dropTable(COLLABORATIONS);
   pgm.dropConstraint('collaborations', 'fk_collaborations.playlist_id__playlists.id');
   pgm.dropConstraint('collaborations', 'fk_collaborations.user_id__users.id');
+
+  pgm.dropTable(COLLABORATIONS);
 };
