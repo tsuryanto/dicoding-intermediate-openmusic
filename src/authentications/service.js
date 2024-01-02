@@ -10,15 +10,19 @@ class AuthenticationService {
 
   async processAuthentication({ username, password }) {
     // verify user credential
-    const { id, password: hashedPassword } = await this.authenticationRepo.getUser(username);
-    const isMatch = await bcrypt.compare(password, hashedPassword || null);
+    const user = await this.authenticationRepo.getUser(username);
+    if (!user?.id) {
+      throw new AuthenticationError('Kredensial yang Anda berikan salah');
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       throw new AuthenticationError('Kredensial yang Anda berikan salah');
     }
 
     // generate access token dan refresh token
-    const accessToken = new JWT(process.env.ACCESS_TOKEN_KEY).encrypt({ id });
-    const refreshToken = new JWT(process.env.REFRESH_TOKEN_KEY).encrypt({ id });
+    const accessToken = new JWT(process.env.ACCESS_TOKEN_KEY).encrypt({ id: user.id });
+    const refreshToken = new JWT(process.env.REFRESH_TOKEN_KEY).encrypt({ id: user.id });
 
     // add refresh token
     await this.authenticationRepo.addRefreshToken(refreshToken);
