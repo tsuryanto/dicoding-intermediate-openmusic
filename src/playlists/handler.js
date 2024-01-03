@@ -72,6 +72,17 @@ class PlaylistHandler {
     const success = new Success(h, 'Playlist berhasil dihapus dari Playlist');
     return success.response();
   }
+
+  async getPlaylistSongActivityHandler(request, h) {
+    const { id: credentialId } = request.auth.credentials;
+    const { id: playlistIdParam } = request.params;
+    const {
+      playlistId,
+      activities,
+    } = await this.service.getPlaylistSongActivity(credentialId, playlistIdParam);
+    const success = new Success(h, null, { playlistId, activities });
+    return success.response();
+  }
 }
 
 module.exports = PlaylistHandler;

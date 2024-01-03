@@ -68,6 +68,7 @@ class PlaylistService {
     if (!resultId) {
       throw new InvariantError('Song gagal ditambahkan ke Playlist');
     }
+    await this.addSongActivity(credentialId, { playlistId, songId }, 'add');
     return resultId;
   }
 
@@ -89,6 +90,32 @@ class PlaylistService {
     if (!resultId) {
       throw new NotFoundError('Song gagal dihapus dari Playlist');
     }
+    await this.addSongActivity(credentialId, { playlistId, songId }, 'delete');
+  }
+
+  async addSongActivity(credentialId, { playlistId, songId }, action) {
+    const id = `playlist-activity-${nanoid(16)}}`;
+    const resultId = await this.playlistRepo.createSongActivity(
+      credentialId,
+      {
+        id, playlistId, songId, action,
+      },
+    );
+    return resultId;
+  }
+
+  async getPlaylistSongActivity(credentialId, playlistId) {
+    await this.verifyPlaylistOwnerWithCollaboration(credentialId, playlistId);
+    const activities = await this.playlistRepo.getAllSongActivities(playlistId);
+    const activitiesResp = activities.map(({
+      username, title, action, time,
+    }) => ({
+      username,
+      title,
+      action,
+      time,
+    }));
+    return { playlistId, activities: activitiesResp };
   }
 }
 

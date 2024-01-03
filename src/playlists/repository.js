@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 const {
-  PLAYLISTS, PLAYLIST_SONGS, USERS, COLLABORATIONS,
+  PLAYLISTS, PLAYLIST_SONGS, USERS, COLLABORATIONS, PLAYLIST_SONG_ACTIVITIES, SONGS,
 } = require('../../utils/constant/Tables');
 const { returningId } = require('../../utils/storage/postgres/Query');
 
@@ -86,6 +86,40 @@ class PlaylistRepository {
 
     const resultId = await returningId(this.dbPool, query);
     return resultId;
+  }
+
+  async createSongActivity(credentialId, {
+    id, playlistId, songId, action,
+  }) {
+    const now = new Date().toISOString();
+    const query = {
+      text: `INSERT INTO ${PLAYLIST_SONG_ACTIVITIES}(id, playlist_id, song_id ,user_id, action, created_at) VALUES($1, $2, $3, $4, $5, $6) RETURNING id`,
+      values: [id, playlistId, songId, credentialId, action, now],
+    };
+
+    const resultId = await returningId(this.dbPool, query);
+    return resultId;
+  }
+
+  async getAllSongActivities(playlistId) {
+    const query = {
+      text: `SELECT psa.*, u.username, s.title from ${PLAYLIST_SONG_ACTIVITIES} psa JOIN ${USERS} u on psa.user_id = u.id JOIN ${SONGS} s ON psa.song_id = s.id WHERE psa.playlist_id = $1`,
+      values: [playlistId],
+    };
+
+    const result = await this.dbPool.query(query);
+    return result.rows.map(({
+      id, playlist_id, song_id, user_id, action, created_at, username, title,
+    }) => ({
+      id,
+      playlistId: playlist_id,
+      songId: song_id,
+      userId: user_id,
+      time: created_at,
+      action,
+      username,
+      title,
+    }));
   }
 }
 
