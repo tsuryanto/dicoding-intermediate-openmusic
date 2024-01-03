@@ -1,5 +1,7 @@
 /* eslint-disable camelcase */
-const { PLAYLISTS, PLAYLIST_SONGS, USERS } = require('../../utils/constant/Tables');
+const {
+  PLAYLISTS, PLAYLIST_SONGS, USERS, COLLABORATIONS,
+} = require('../../utils/constant/Tables');
 const { returningId } = require('../../utils/storage/postgres/Query');
 
 class PlaylistRepository {
@@ -18,19 +20,20 @@ class PlaylistRepository {
     return resultId;
   }
 
-  async getAll(ownerParam) {
+  async getAll(credentialId) {
     const query = {
-      text: `SELECT * from ${PLAYLISTS} WHERE owner = $1`,
-      values: [ownerParam],
+      text: `SELECT p.*, u.username from ${PLAYLISTS} p JOIN ${USERS} u on p.owner = u.id LEFT JOIN ${COLLABORATIONS} c ON p.id = c.playlist_id WHERE p.owner = $1 OR c.user_id = $1 GROUP BY p.id, u.username`,
+      values: [credentialId],
     };
 
     const result = await this.dbPool.query(query);
     return result.rows.map(({
-      id, name, owner,
+      id, name, owner, username,
     }) => ({
       id,
       name,
       owner,
+      username,
     }));
   }
 

@@ -15,13 +15,13 @@ const InitCollaborationPlugin = (dbPool) => ({
     version: '1.0.0',
     register: async (server) => {
       const songRepo = new SongRepository(dbPool);
-      const songService = new SongService(songRepo);
-
       const playlistRepo = new PlaylistRepository(dbPool);
-      const playlistService = new PlaylistService(songService, playlistRepo, songRepo);
-
       const userRepo = new UserRepository(dbPool);
       const collaborationRepo = new CollaborationRepository(dbPool);
+
+      const songService = new SongService(songRepo);
+      const playlistService = new PlaylistService(songService, playlistRepo, collaborationRepo);
+
       const collaborationService = new CollaborationService(
         playlistService,
         collaborationRepo,

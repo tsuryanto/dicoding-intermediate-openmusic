@@ -32,8 +32,8 @@ class CollaborationHandler {
     const { id: credentialId } = request.auth.credentials;
     const { playlistId, userId } = request.payload;
 
-    const resultId = await this.service.deleteCollaboration(credentialId, { playlistId, userId });
-    const success = new Success(h, 'Collaboration berhasil dihapus', { resultId }, 201);
+    await this.service.deleteCollaboration(credentialId, { playlistId, userId });
+    const success = new Success(h, 'Collaboration berhasil dihapus');
     return success.response();
   }
 }

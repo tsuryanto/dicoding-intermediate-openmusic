@@ -39,13 +39,12 @@ class CollaborationService {
 
   async deleteCollaboration(credentialId, { playlistId, userId }) {
     await this.playlistService.verifyPlaylistOwner(credentialId, playlistId);
-    await this.verifyCollaboration(credentialId, { playlistId });
     const collaboration = await this.collaborationRepo.get({ playlistId, userId });
     if (!collaboration) {
       throw new NotFoundError('Collaboration tidak ditemukan');
     }
 
-    const resultId = await this.collaborationRepo.deleteById({ id: collaboration.id });
+    const resultId = await this.collaborationRepo.deleteById(collaboration.id);
     if (!resultId) {
       throw new NotFoundError('Song gagal dihapus dari Playlist');
     }

@@ -4,9 +4,10 @@ const NotFoundError = require('../../utils/response/exceptions/NotFoundError');
 const ForbiddenError = require('../../utils/response/exceptions/ForbiddenError');
 
 class PlaylistService {
-  constructor(songService, playlistRepo) {
+  constructor(songService, playlistRepo, collaborationRepo) {
     this.songService = songService;
     this.playlistRepo = playlistRepo;
+    this.collaborationRepo = collaborationRepo;
   }
 
   async verifyPlaylistOwner(credentialId, playlistId) {
@@ -15,6 +16,17 @@ class PlaylistService {
       throw new NotFoundError('Playlist tidak ditemukan');
     }
     if (playlist.owner !== credentialId) {
+      throw new ForbiddenError('Anda tidak berhak mengakses resource ini');
+    }
+  }
+
+  async verifyPlaylistOwnerWithCollaboration(credentialId, playlistId) {
+    const playlist = await this.playlistRepo.getById(playlistId);
+    const collaboration = await this.collaborationRepo.get({ playlistId, userId: credentialId });
+    if (!collaboration && !playlist) {
+      throw new NotFoundError('Playlist tidak ditemukan');
+    }
+    if ((playlist?.owner !== credentialId) && (collaboration?.userId !== credentialId)) {
       throw new ForbiddenError('Anda tidak berhak mengakses resource ini');
     }
   }
@@ -31,11 +43,11 @@ class PlaylistService {
   async getPlaylists(credentialId) {
     const songs = await this.playlistRepo.getAll(credentialId);
     return songs.map(({
-      id, name, owner,
+      id, name, username,
     }) => ({
       id,
       name,
-      username: owner,
+      username,
     }));
   }
 
@@ -48,7 +60,7 @@ class PlaylistService {
   }
 
   async addSongIntoPlaylist(credentialId, playlistId, { songId }) {
-    await this.verifyPlaylistOwner(credentialId, playlistId);
+    await this.verifyPlaylistOwnerWithCollaboration(credentialId, playlistId);
     await this.songService.getSong(songId);
     const id = `playlist-song-${nanoid(16)}}`;
     const resultId = await this.playlistRepo.addSong(id, playlistId, songId);
@@ -60,7 +72,7 @@ class PlaylistService {
   }
 
   async getSongsInPlaylist(credentialId, playlistId) {
-    await this.verifyPlaylistOwner(credentialId, playlistId);
+    await this.verifyPlaylistOwnerWithCollaboration(credentialId, playlistId);
     const { id, name, username } = await this.playlistRepo.getById(playlistId);
     const songs = await this.songService.getSongs({ playlistIdParam: playlistId });
     return {
@@ -72,7 +84,7 @@ class PlaylistService {
   }
 
   async deleteSongFromPlaylist(credentialId, playlistId, { songId }) {
-    await this.verifyPlaylistOwner(credentialId, playlistId);
+    await this.verifyPlaylistOwnerWithCollaboration(credentialId, playlistId);
     const resultId = await this.playlistRepo.deleteSongById(playlistId, songId);
     if (!resultId) {
       throw new NotFoundError('Song gagal dihapus dari Playlist');
