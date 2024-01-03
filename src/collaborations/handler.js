@@ -3,7 +3,7 @@ const Success = require('../../utils/response/Success');
 const {
   PostCollaborationPayloadSchema,
   DeleteCollaborationPayloadSchema,
-} = require('./ model/requestSchema');
+} = require('./model/requestSchema');
 
 class CollaborationHandler {
   constructor(service) {
