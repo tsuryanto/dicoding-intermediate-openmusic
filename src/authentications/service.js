@@ -21,8 +21,8 @@ class AuthenticationService {
     }
 
     // generate access token dan refresh token
-    const accessToken = new JWT(process.env.ACCESS_TOKEN_KEY).encrypt({ id: user.id });
-    const refreshToken = new JWT(process.env.REFRESH_TOKEN_KEY).encrypt({ id: user.id });
+    const accessToken = new JWT(process.env.ACCESS_TOKEN_KEY).encrypt({ userId: user.id });
+    const refreshToken = new JWT(process.env.REFRESH_TOKEN_KEY).encrypt({ userId: user.id });
 
     // add refresh token
     await this.authenticationRepo.addRefreshToken(refreshToken);
@@ -37,9 +37,7 @@ class AuthenticationService {
       throw new InvariantError('Refresh token tidak valid');
     }
 
-    const payload = new JWT(process.env.REFRESH_TOKEN_KEY).decrypt(availableRefreshToken);
-    const userId = payload.id;
-
+    const { userId } = new JWT(process.env.REFRESH_TOKEN_KEY).decrypt(availableRefreshToken);
     const accessToken = new JWT(process.env.ACCESS_TOKEN_KEY).encrypt({ userId });
     return accessToken;
   }
