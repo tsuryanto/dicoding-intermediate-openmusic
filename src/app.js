@@ -1,7 +1,6 @@
 // mengimpor dotenv dan menjalankan konfigurasinya
 require('dotenv').config();
 const { Pool } = require('pg');
-
 const Hapi = require('@hapi/hapi');
 const Jwt = require('@hapi/jwt');
 
@@ -14,6 +13,7 @@ const InitAlbumPlugin = require('./albums');
 const InitSongPlugin = require('./songs');
 const InitPlaylistPlugin = require('./playlists');
 const InitCollaborationPlugin = require('./collaborations');
+const InitExportPlugin = require('./exports');
 
 const init = async () => {
   const server = Hapi.server({
@@ -35,10 +35,10 @@ const init = async () => {
 
   // mendefinisikan strategy autentikasi jwt
 
-  // 'notesapp_jwt' = strategy name akan digunakan untuk menetapkan authentication pada routes.
+  // 'openMusicJwt' = strategy name akan digunakan untuk menetapkan authentication pada routes.
   // 'jwt' = nama skema yang akan digunakan pada pembuatan strategy
   //         di sini kita memberikan nilai ‘jwt’ untuk menggunakan strategi jwt dari @hapi/jwt.
-  server.auth.strategy('notesappJwt', 'jwt', {
+  server.auth.strategy('openMusicJwt', 'jwt', {
 
     // merupakan key atau kunci dari token JWT-nya (di mana merupakan access token key)
     keys: process.env.ACCESS_TOKEN_KEY,
@@ -77,6 +77,7 @@ const init = async () => {
     InitSongPlugin(dbPool),
     InitPlaylistPlugin(dbPool),
     InitCollaborationPlugin(dbPool),
+    InitExportPlugin(dbPool),
   ]);
 
   // err response handling
