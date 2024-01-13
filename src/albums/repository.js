@@ -29,11 +29,12 @@ class AlbumRepository {
     }
 
     return result.rows.map(({
-      id, name, year, created_at, updated_at,
+      id, name, year, cover, created_at, updated_at,
     }) => ({
       id,
       name,
       year,
+      cover,
       createdAt: created_at,
       updatedAt: updated_at,
     }))[0];
@@ -44,6 +45,17 @@ class AlbumRepository {
     const query = {
       text: `UPDATE ${ALBUMS} SET name = $2, year = $3, updated_at = $4 WHERE id = $1 RETURNING id`,
       values: [id, name, year, now],
+    };
+
+    const resultId = await returningId(this.dbPool, query);
+    return resultId;
+  }
+
+  async updateCoverById(id, filename) {
+    const now = new Date().toISOString();
+    const query = {
+      text: `UPDATE ${ALBUMS} SET cover = $2, updated_at = $3 WHERE id = $1 RETURNING id`,
+      values: [id, filename, now],
     };
 
     const resultId = await returningId(this.dbPool, query);

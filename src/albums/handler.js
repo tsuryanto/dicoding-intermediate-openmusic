@@ -1,5 +1,5 @@
 const Success = require('../../utils/response/Success');
-const { AlbumPayloadSchema } = require('./model/requestSchema');
+const { AlbumPayloadSchema, PostAlbumCoverHeaderSchema } = require('./model/requestSchema');
 const Validator = require('../../utils/request/Validator');
 
 class AlbumHandler {
@@ -41,6 +41,19 @@ class AlbumHandler {
     const { id } = request.params;
     await this.service.deleteAlbumById(id);
     const success = new Success(h, 'Album berhasil dihapus');
+    return success.response();
+  }
+
+  async postUploadAlbumCoverHandler(request, h) {
+    const payloadObj = request.payload;
+    const data = payloadObj.cover;
+
+    const validator = new Validator(PostAlbumCoverHeaderSchema, true);
+    validator.validate(data.hapi.headers);
+
+    const { id } = request.params;
+    await this.service.uploadAlbumCover(id, data, data.hapi);
+    const success = new Success(h, 'Sampul berhasil diunggah', null, 201);
     return success.response();
   }
 }
