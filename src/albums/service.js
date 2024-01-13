@@ -67,6 +67,46 @@ class AlbumService {
       throw new InvariantError('Sampul berhasil diunggah');
     }
   }
+
+  async likeAlbum(albumId, userId) {
+    const album = await this.albumRepo.getById(albumId);
+    if (!album) {
+      throw new NotFoundError('Album tidak ditemukan');
+    }
+
+    const userAlbumLike = await this.albumRepo.getLikeAlbumById(userId, albumId);
+    if (userAlbumLike) {
+      throw new InvariantError('Anda sudah men-like album ini');
+    }
+
+    const id = `user-album-like-${nanoid(16)}}`;
+    const resultId = await this.albumRepo.addLikeAlbumById(id, userId, albumId);
+    if (!resultId) {
+      throw new InvariantError('Album gagal dilike');
+    }
+  }
+
+  async unlikeAlbum(albumId, userId) {
+    const album = await this.albumRepo.getById(albumId);
+    if (!album) {
+      throw new NotFoundError('Album tidak ditemukan');
+    }
+
+    const userAlbumLike = await this.albumRepo.getLikeAlbumById(userId, albumId);
+    if (!userAlbumLike) {
+      throw new InvariantError('Anda belum men-like album ini');
+    }
+
+    const resultId = await this.albumRepo.deleteLikeAlbumById(userId, albumId);
+    if (!resultId) {
+      throw new InvariantError('Album gagal diunlike');
+    }
+  }
+
+  async countLikesAlbumById(albumId) {
+    const likes = await this.albumRepo.countLikesAlbumById(albumId);
+    return Number(likes);
+  }
 }
 
 module.exports = AlbumService;

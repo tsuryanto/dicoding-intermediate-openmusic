@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-const { ALBUMS } = require('../../utils/constant/Tables');
+const { ALBUMS, USER_ALBUM_LIKES } = require('../../utils/constant/Tables');
 const { returningId } = require('../../utils/storage/postgres/Query');
 
 class AlbumRepository {
@@ -66,6 +66,60 @@ class AlbumRepository {
     const query = {
       text: `DELETE FROM ${ALBUMS} WHERE id = $1 RETURNING id`,
       values: [id],
+    };
+
+    const resultId = await returningId(this.dbPool, query);
+    return resultId;
+  }
+
+  async addLikeAlbumById(id, userId, albumId) {
+    const now = new Date().toISOString();
+    const query = {
+      text: `INSERT INTO ${USER_ALBUM_LIKES}(id, user_id, album_id, created_at) VALUES($1, $2, $3, $4) RETURNING id`,
+      values: [id, userId, albumId, now],
+    };
+
+    const resultId = await returningId(this.dbPool, query);
+    return resultId;
+  }
+
+  async getLikeAlbumById(userId, albumId) {
+    const query = {
+      text: `SELECT * FROM ${USER_ALBUM_LIKES} WHERE user_id = $1 AND album_id = $2`,
+      values: [userId, albumId],
+    };
+    const result = await this.dbPool.query(query);
+    if (!result.rowCount) {
+      return null;
+    }
+
+    return result.rows.map(({
+      id, user_id, album_id, created_at,
+    }) => ({
+      id,
+      userId: user_id,
+      albumId: album_id,
+      createdAt: created_at,
+    }))[0];
+  }
+
+  async countLikesAlbumById(albumId) {
+    const query = {
+      text: `SELECT COUNT(*) FROM ${USER_ALBUM_LIKES} WHERE album_id = $1`,
+      values: [albumId],
+    };
+    const result = await this.dbPool.query(query);
+    if (!result.rowCount) {
+      return null;
+    }
+
+    return result.rows[0].count;
+  }
+
+  async deleteLikeAlbumById(userId, albumId) {
+    const query = {
+      text: `DELETE FROM ${USER_ALBUM_LIKES} WHERE user_id = $1 AND album_id = $2 RETURNING id`,
+      values: [userId, albumId],
     };
 
     const resultId = await returningId(this.dbPool, query);

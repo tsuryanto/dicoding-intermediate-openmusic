@@ -13,6 +13,10 @@ exports.up = (pgm) => {
       type: 'VARCHAR(50)',
       notNull: true,
     },
+    created_at: {
+      type: 'TEXT',
+      notNull: true,
+    },
   });
 
   // create constraint foreign key from user_album_likes.user_id to users.id

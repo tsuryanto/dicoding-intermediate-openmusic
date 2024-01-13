@@ -6,7 +6,7 @@ const PLAYLISTS = 'playlists';
 const PLAYLIST_SONGS = 'playlist_songs';
 const COLLABORATIONS = 'collaborations';
 const PLAYLIST_SONG_ACTIVITIES = 'playlist_song_activities';
-
+const USER_ALBUM_LIKES = 'user_album_likes';
 module.exports = {
   ALBUMS,
   SONGS,
@@ -16,4 +16,5 @@ module.exports = {
   PLAYLIST_SONGS,
   COLLABORATIONS,
   PLAYLIST_SONG_ACTIVITIES,
+  USER_ALBUM_LIKES,
 };
