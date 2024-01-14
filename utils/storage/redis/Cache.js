@@ -1,12 +1,13 @@
 require('dotenv').config();
 const redis = require('redis');
+const config = require('../../constant/Config');
 
 class Cache {
   constructor() {
     this.client = redis.createClient({
       socket: {
-        host: process.env.REDIS_SERVER,
-        port: process.env.REDIS_PORT,
+        host: config.redis.host,
+        port: config.redis.port,
       },
     });
     this.client.on('error', (error) => {

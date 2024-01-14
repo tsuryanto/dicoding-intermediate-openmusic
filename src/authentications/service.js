@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const AuthenticationError = require('../../utils/response/exceptions/AuthenticationError');
 const JWT = require('../../utils/authentication/JWT');
 const InvariantError = require('../../utils/response/exceptions/InvariantError');
+const config = require('../../utils/constant/Config');
 
 class AuthenticationService {
   constructor(authenticationRepo) {
@@ -21,8 +22,8 @@ class AuthenticationService {
     }
 
     // generate access token dan refresh token
-    const accessToken = new JWT(process.env.ACCESS_TOKEN_KEY).encrypt({ userId: user.id });
-    const refreshToken = new JWT(process.env.REFRESH_TOKEN_KEY).encrypt({ userId: user.id });
+    const accessToken = new JWT(config.jwt.accessKey).encrypt({ userId: user.id });
+    const refreshToken = new JWT(config.jwt.refreshKey).encrypt({ userId: user.id });
 
     // add refresh token
     await this.authenticationRepo.addRefreshToken(refreshToken);
@@ -37,13 +38,13 @@ class AuthenticationService {
       throw new InvariantError('Refresh token tidak valid');
     }
 
-    const { userId } = new JWT(process.env.REFRESH_TOKEN_KEY).decrypt(availableRefreshToken);
-    const accessToken = new JWT(process.env.ACCESS_TOKEN_KEY).encrypt({ userId });
+    const { userId } = new JWT(config.jwt.refreshKey).decrypt(availableRefreshToken);
+    const accessToken = new JWT(config.jwt.accessKey).encrypt({ userId });
     return accessToken;
   }
 
   async deleteRefreshToken(refreshToken) {
-    new JWT(process.env.REFRESH_TOKEN_KEY).decrypt(refreshToken);
+    new JWT(config.jwt.refreshKey).decrypt(refreshToken);
     await this.authenticationRepo.deleteRefreshToken(refreshToken);
   }
 }

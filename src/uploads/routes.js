@@ -1,4 +1,5 @@
 const path = require('path');
+const config = require('../../utils/constant/Config');
 
 const routes = () => [
   {
@@ -6,7 +7,7 @@ const routes = () => [
     path: '/uploads/{param*}',
     handler: {
       directory: {
-        path: path.resolve(__dirname, `../../${process.env.FILE_PATH}`),
+        path: path.resolve(__dirname, `../../${config.file.path}`),
       },
     },
   },

@@ -1,9 +1,9 @@
 // mengimpor dotenv dan menjalankan konfigurasinya
-require('dotenv').config();
 const { Pool } = require('pg');
 const Hapi = require('@hapi/hapi');
 const Jwt = require('@hapi/jwt');
 const Inert = require('@hapi/inert');
+const config = require('../utils/constant/Config');
 
 const ClientError = require('../utils/response/exceptions/ClientError');
 const Response = require('../utils/response/Response');
@@ -19,8 +19,8 @@ const InitUploadsPlugin = require('./uploads');
 
 const init = async () => {
   const server = Hapi.server({
-    port: process.env.PORT,
-    host: process.env.HOST,
+    port: config.app.port,
+    host: config.app.host,
     routes: {
       cors: {
         origin: ['*'],
@@ -46,7 +46,7 @@ const init = async () => {
   server.auth.strategy('openMusicJwt', 'jwt', {
 
     // merupakan key atau kunci dari token JWT-nya (di mana merupakan access token key)
-    keys: process.env.ACCESS_TOKEN_KEY,
+    keys: config.jwt.accessKey,
 
     // merupakan objek yang menentukan seperti apa signature token JWT harus diverifikasi.
     // nilai false di value dari object verify berarti tidak akan di verifikasi
@@ -58,7 +58,7 @@ const init = async () => {
       // nilai subject dari token,
       sub: false,
       // nilai number yang menentukan umur kedaluwarsa dari token
-      maxAgeSec: process.env.ACCESS_TOKEN_AGE,
+      maxAgeSec: config.jwt.tokenAge,
     },
 
     // merupakan fungsi yang membawa artifacts token.
@@ -72,7 +72,14 @@ const init = async () => {
     }),
   });
 
-  const dbPool = new Pool();
+  // postgres connection
+  const dbPool = new Pool({
+    user: config.postgres.user,
+    host: config.postgres.host,
+    database: config.postgres.database,
+    password: config.postgres.password,
+    port: config.postgres.port,
+  });
 
   // Init Services
   await server.register([

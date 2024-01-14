@@ -1,11 +1,12 @@
 require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
+const config = require('../../constant/Config');
 
 // create class LocalStorage to write and read file
 class LocalStorage {
   constructor(folder) {
-    const dir = path.resolve(__dirname, `../../../${process.env.FILE_PATH}/${folder}`);
+    const dir = path.resolve(__dirname, `../../../${config.file.path}/${folder}`);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
@@ -31,7 +32,7 @@ class LocalStorage {
   }
 
   getUrlUpload(filename) {
-    return `${process.env.FILE_BASE_URL}/uploads/${this.folder}/${filename}`;
+    return `${config.file.baseUrl}/uploads/${this.folder}/${filename}`;
   }
 }
 
