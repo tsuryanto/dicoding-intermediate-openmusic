@@ -7,6 +7,10 @@ class Response {
     this.status = status;
   }
 
+  header() {
+    return this.h.response();
+  }
+
   response() {
     const payload = {
       status: this.status,
