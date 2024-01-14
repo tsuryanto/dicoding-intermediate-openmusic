@@ -3,6 +3,7 @@ const { nanoid } = require('nanoid');
 const InvariantError = require('../../utils/response/exceptions/InvariantError');
 const NotFoundError = require('../../utils/response/exceptions/NotFoundError');
 const LocalStorage = require('../../utils/storage/local/File');
+const Cache = require('../../utils/storage/redis/Cache');
 
 class AlbumService {
   constructor(songService, albumRepo) {
@@ -10,6 +11,7 @@ class AlbumService {
     this.albumRepo = albumRepo;
 
     this.coversDir = 'albums/covers';
+    this.cache = new Cache();
   }
 
   async addAlbum({ name, year }) {
@@ -84,6 +86,9 @@ class AlbumService {
     if (!resultId) {
       throw new InvariantError('Album gagal dilike');
     }
+
+    // delete cache
+    await this.cache.delete(`album-likes:${albumId}`);
   }
 
   async unlikeAlbum(albumId, userId) {
@@ -101,11 +106,23 @@ class AlbumService {
     if (!resultId) {
       throw new InvariantError('Album gagal diunlike');
     }
+
+    // delete cache
+    await this.cache.delete(`album-likes:${albumId}`);
   }
 
   async countLikesAlbumById(albumId) {
-    const likes = await this.albumRepo.countLikesAlbumById(albumId);
-    return Number(likes);
+    try {
+      // get cache
+      const likes = await this.cache.get(`album-likes:${albumId}`);
+      return { likes: Number(likes), isCache: true };
+    } catch (error) {
+      const likes = await this.albumRepo.countLikesAlbumById(albumId);
+
+      // set cache
+      await this.cache.set(`album-likes:${albumId}`, likes, 1800);
+      return { likes: Number(likes), isCache: false };
+    }
   }
 }
 
