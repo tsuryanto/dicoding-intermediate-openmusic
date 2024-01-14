@@ -105,8 +105,8 @@ const init = async () => {
         return resp.response();
       }
 
-      // handle unauthorized response from Hapi
-      if (response.isBoom && response.output.payload.statusCode === 401) {
+      // handle error response from Hapi
+      if (response.isBoom) {
         const resp = new Response(h, response.output.payload.message, response.output.payload.statusCode, null, 'fail');
         return resp.response();
       }

@@ -56,12 +56,6 @@ class AlbumService {
   }
 
   async uploadAlbumCover(id, payload, meta) {
-    // check file size
-    const { _data: fileData } = payload;
-    if (fileData.length > 512000) {
-      throw new InvariantError('Ukuran file harus kurang dari 500kb', 413);
-    }
-
     const storage = new LocalStorage(this.coversDir);
     const fileName = await storage.writeFile(payload, meta);
     const resultId = await this.albumRepo.updateCoverById(id, fileName);
